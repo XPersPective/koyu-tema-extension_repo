@@ -1,17 +1,36 @@
-// Extension başlatma
+// Extension başlatma - Sayfa yüklendiğinde otomatik çalışır
 (function() {
     let currentTheme = 'standard';
     let isEnabled = true;
     
-    // Ayarları yükle
-    chrome.storage.sync.get(['darkThemeEnabled', 'selectedTheme'], function(result) {
-        isEnabled = result.darkThemeEnabled !== false;
-        currentTheme = result.selectedTheme || 'standard';
-        
-        if (isEnabled) {
-            applyTheme(currentTheme);
+    // Sayfa yüklendiğinde ayarları kontrol et ve tema uygula
+    function initializeTheme() {
+        chrome.storage.sync.get(['darkThemeEnabled', 'selectedTheme'], function(result) {
+            isEnabled = result.darkThemeEnabled !== false;
+            currentTheme = result.selectedTheme || 'standard';
+            
+            if (isEnabled) {
+                applyTheme(currentTheme);
+            }
+        });
+    }
+    
+    // Sayfa yüklendiğinde ve DOM değişikliklerinde çalışır
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeTheme);
+    } else {
+        initializeTheme();
+    }
+    
+    // Sayfa geçişlerinde yeniden başlatma (SPA'lar için)
+    let lastUrl = location.href;
+    new MutationObserver(() => {
+        const url = location.href;
+        if (url !== lastUrl) {
+            lastUrl = url;
+            setTimeout(initializeTheme, 100); // Kısa gecikme ile tema uygula
         }
-    });
+    }).observe(document, { subtree: true, childList: true });
     
     // Sistem koyu modu kontrolü
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {

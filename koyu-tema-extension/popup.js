@@ -20,10 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
             chrome.storage.sync.set({selectedTheme: theme});
             updateActiveTheme(theme);
             
-            // Aktif sekmeye tema uygula
+            // Aktif sekmeye tema değişikliğini bildir
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                // CSS ve JS'yi aktif sekmeye enjekte et
-                applyThemeToActiveTab(tabs[0].id, theme, true);
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: 'changeTheme',
+                    theme: theme
+                });
             });
         });
     });
@@ -36,49 +38,15 @@ document.addEventListener('DOMContentLoaded', function() {
             chrome.storage.sync.set({darkThemeEnabled: newState});
             updateStatus(newState);
             
-            // Aktif sekmeye durum gönder
+            // Aktif sekmeye durum değişikliğini bildir
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                chrome.storage.sync.get(['selectedTheme'], function(themeResult) {
-                    const theme = themeResult.selectedTheme || 'standard';
-                    applyThemeToActiveTab(tabs[0].id, theme, newState);
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: 'toggleTheme',
+                    enabled: newState
                 });
             });
         });
     });
-    
-    // Aktif sekmeye tema uygulama fonksiyonu
-    function applyThemeToActiveTab(tabId, theme, enabled) {
-        if (enabled) {
-            // CSS dosyasını enjekte et
-            chrome.scripting.insertCSS({
-                target: { tabId: tabId },
-                files: ['themes.css']
-            });
-            
-            // Content script'i enjekte et
-            chrome.scripting.executeScript({
-                target: { tabId: tabId },
-                files: ['content.js']
-            }, function() {
-                // Script yüklendikten sonra tema mesajı gönder
-                chrome.tabs.sendMessage(tabId, {
-                    action: 'changeTheme',
-                    theme: theme
-                });
-            });
-        } else {
-            // CSS'yi kaldır
-            chrome.scripting.removeCSS({
-                target: { tabId: tabId },
-                files: ['themes.css']
-            });
-            
-            chrome.tabs.sendMessage(tabId, {
-                action: 'toggleTheme',
-                enabled: false
-            });
-        }
-    }
     
     function updateStatus(enabled) {
         if (enabled) {
