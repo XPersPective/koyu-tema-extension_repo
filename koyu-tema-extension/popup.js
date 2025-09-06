@@ -22,10 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Aktif sekmeye tema uygula
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                chrome.tabs.sendMessage(tabs[0].id, {
-                    action: 'changeTheme',
-                    theme: theme
-                });
+                // CSS ve JS'yi aktif sekmeye enjekte et
+                applyThemeToActiveTab(tabs[0].id, theme, true);
             });
         });
     });
@@ -40,13 +38,47 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Aktif sekmeye durum gönder
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                chrome.tabs.sendMessage(tabs[0].id, {
-                    action: 'toggleTheme',
-                    enabled: newState
+                chrome.storage.sync.get(['selectedTheme'], function(themeResult) {
+                    const theme = themeResult.selectedTheme || 'standard';
+                    applyThemeToActiveTab(tabs[0].id, theme, newState);
                 });
             });
         });
     });
+    
+    // Aktif sekmeye tema uygulama fonksiyonu
+    function applyThemeToActiveTab(tabId, theme, enabled) {
+        if (enabled) {
+            // CSS dosyasını enjekte et
+            chrome.scripting.insertCSS({
+                target: { tabId: tabId },
+                files: ['themes.css']
+            });
+            
+            // Content script'i enjekte et
+            chrome.scripting.executeScript({
+                target: { tabId: tabId },
+                files: ['content.js']
+            }, function() {
+                // Script yüklendikten sonra tema mesajı gönder
+                chrome.tabs.sendMessage(tabId, {
+                    action: 'changeTheme',
+                    theme: theme
+                });
+            });
+        } else {
+            // CSS'yi kaldır
+            chrome.scripting.removeCSS({
+                target: { tabId: tabId },
+                files: ['themes.css']
+            });
+            
+            chrome.tabs.sendMessage(tabId, {
+                action: 'toggleTheme',
+                enabled: false
+            });
+        }
+    }
     
     function updateStatus(enabled) {
         if (enabled) {

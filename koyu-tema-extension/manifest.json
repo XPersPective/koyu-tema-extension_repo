@@ -6,15 +6,12 @@
   
   "permissions": [
     "activeTab",
-    "storage"
+    "storage",
+    "scripting"
   ],
   
-  "content_scripts": [
-    {
-      "matches": ["*://*/*"],
-      "js": ["content.js"],
-      "css": ["themes.css"]
-    }
+  "host_permissions": [
+    "<all_urls>"
   ],
   
   "action": {
