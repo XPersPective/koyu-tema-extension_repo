@@ -1,0 +1,30 @@
+# Chrome Extension Files
+*.crx
+*.pem
+*.zip
+
+# Generated Images (keep sources)
+*.png
+!koyu-tema-extension/icon*.png
+!koyu-tema-extension/icons/*.png
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node.js (if using build tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+*.temp
+*~

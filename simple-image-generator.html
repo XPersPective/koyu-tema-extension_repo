@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Chrome Web Store Görselleri - Basit</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+        .image-section {
+            background: #2d2d2d;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .image-title {
+            color: #4CAF50;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .image-preview {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            margin: 5px;
+        }
+        .download-btn {
+            background: #4CAF50;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .download-btn:hover {
+            background: #45a049;
+        }
+        .info {
+            background: #333;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .quick-download {
+            background: #4a2d4a;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .big-btn {
+            background: #ff6b35;
+            color: white;
+            font-size: 18px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Chrome Web Store Görselleri</h1>
+        <p style="text-align: center; color: #888;">Akıllı Koyu Tema Extension için gerekli görseller</p>
+
+        <div class="quick-download">
+            <h2 style="color: #4CAF50;">⚡ Hızlı İndirme</h2>
+            <p>Hemen kullanabileceğiniz hazır görseller:</p>
+            <button class="big-btn" onclick="createAndDownloadIcon()">
+                🎯 Store Icon (128x128) İndir
+            </button>
+            <button class="big-btn" onclick="createAndDownloadScreenshot()">
+                📸 Screenshot (1280x800) İndir
+            </button>
+            <button class="big-btn" onclick="createAndDownloadPromo()">
+                🎨 Promo Tile (440x280) İndir
+            </button>
+            <button class="big-btn" onclick="createAndDownloadMarquee()">
+                🌟 Marquee (1400x560) İndir
+            </button>
+        </div>
+
+        <!-- Store Icon Preview -->
+        <div class="image-section">
+            <div class="image-title">🎯 Store Icon - 128x128</div>
+            <div class="info">Chrome Web Store mağaza simgesi • PNG formatında</div>
+            <div class="image-preview">
+                <canvas id="storeIcon" width="128" height="128"></canvas>
+                <br>
+                <button class="download-btn" onclick="downloadCanvas('storeIcon', 'store-icon-128x128.png')">
+                    📥 Store Icon İndir
+                </button>
+            </div>
+        </div>
+
+        <!-- Screenshot Preview -->
+        <div class="image-section">
+            <div class="image-title">📸 Screenshot - 1280x800</div>
+            <div class="info">Extension çalışırken ekran görüntüsü • PNG formatında</div>
+            <div class="image-preview">
+                <canvas id="screenshot" width="640" height="400"></canvas>
+                <br>
+                <small>Önizleme 640x400, indirilen dosya 1280x800 olacak</small>
+                <br>
+                <button class="download-btn" onclick="createAndDownloadScreenshot()">
+                    📥 Screenshot (1280x800) İndir
+                </button>
+            </div>
+        </div>
+
+        <!-- Promo Tile Preview -->
+        <div class="image-section">
+            <div class="image-title">🎨 Küçük Tanıtım - 440x280</div>
+            <div class="info">Küçük tanıtım bloğu • PNG formatında</div>
+            <div class="image-preview">
+                <canvas id="promoTile" width="440" height="280"></canvas>
+                <br>
+                <button class="download-btn" onclick="downloadCanvas('promoTile', 'promo-tile-440x280.png')">
+                    📥 Promo Tile İndir
+                </button>
+            </div>
+        </div>
+
+        <!-- Marquee Preview -->
+        <div class="image-section">
+            <div class="image-title">🌟 Kayan Yazı Tanıtım - 1400x560</div>
+            <div class="info">Büyük kayan yazı tanıtım bloğu • PNG formatında</div>
+            <div class="image-preview">
+                <canvas id="marquee" width="700" height="280"></canvas>
+                <br>
+                <small>Önizleme 700x280, indirilen dosya 1400x560 olacak</small>
+                <br>
+                <button class="download-btn" onclick="createAndDownloadMarquee()">
+                    📥 Marquee (1400x560) İndir
+                </button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 40px 0;">
+            <button class="big-btn" onclick="downloadAllImages()" style="background: #2e7d32;">
+                🚀 TÜM GÖRSELLERİ İNDİR
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Sayfa yüklenince görselleri oluştur
+        window.onload = function() {
+            createStoreIcon();
+            createScreenshot();
+            createPromoTile();
+            createMarquee();
+        };
+
+        // Store Icon oluştur
+        function createStoreIcon() {
+            const canvas = document.getElementById('storeIcon');
+            const ctx = canvas.getContext('2d');
+            
+            // Gradient arkaplan
+            const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+            gradient.addColorStop(0, '#2d2d2d');
+            gradient.addColorStop(1, '#1a1a1a');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 128, 128);
+            
+            // Yuvarlatılmış köşeler
+            ctx.globalCompositeOperation = 'destination-in';
+            ctx.beginPath();
+            roundRect(ctx, 0, 0, 128, 128, 20);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // Ay simgesi
+            ctx.font = '64px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillText('🌙', 64, 64);
+            
+            // Parlaklık efekti
+            const highlight = ctx.createRadialGradient(40, 40, 0, 40, 40, 50);
+            highlight.addColorStop(0, 'rgba(255,255,255,0.3)');
+            highlight.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = highlight;
+            ctx.fillRect(0, 0, 128, 128);
+        }
+
+        // Screenshot oluştur
+        function createScreenshot() {
+            const canvas = document.getElementById('screenshot');
+            const ctx = canvas.getContext('2d');
+            
+            // Beyaz arkaplan
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 640, 400);
+            
+            // Browser çubuğu
+            ctx.fillStyle = '#f1f3f4';
+            ctx.fillRect(0, 0, 640, 40);
+            
+            // Browser noktaları
+            ctx.fillStyle = '#ff5f57';
+            ctx.beginPath();
+            ctx.arc(15, 20, 6, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#ffbd2e';
+            ctx.beginPath();
+            ctx.arc(35, 20, 6, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#28ca42';
+            ctx.beginPath();
+            ctx.arc(55, 20, 6, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // URL çubuğu
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(80, 10, 400, 20);
+            ctx.strokeStyle = '#dadce0';
+            ctx.strokeRect(80, 10, 400, 20);
+            
+            ctx.fillStyle = '#5f6368';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('https://example.com', 85, 23);
+            
+            // Extension simgesi
+            ctx.fillStyle = '#2d2d2d';
+            ctx.fillRect(600, 8, 24, 24);
+            ctx.fillStyle = '#4CAF50';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🌙', 612, 24);
+            
+            // Extension popup
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(350, 50, 280, 300);
+            
+            // Popup başlık
+            ctx.fillStyle = '#4CAF50';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🌙 Akıllı Koyu Tema', 490, 80);
+            
+            // Tema seçenekleri
+            const themes = [
+                { name: 'Standart Koyu', color: '#2d2d2d', active: true },
+                { name: 'Yumuşak Koyu', color: '#3d3d3d' },
+                { name: 'Yüksek Kontrast', color: '#000' },
+                { name: 'Mavi Koyu', color: '#1a2332' }
+            ];
+            
+            themes.forEach((theme, i) => {
+                const y = 110 + i * 40;
+                
+                // Tema kutusu
+                ctx.fillStyle = theme.active ? '#4CAF50' : '#333';
+                ctx.fillRect(360, y, 260, 35);
+                
+                // Tema renk dairesi
+                ctx.fillStyle = theme.color;
+                ctx.beginPath();
+                ctx.arc(380, y + 17, 10, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Tema adı
+                ctx.fillStyle = theme.active ? '#000' : '#e0e0e0';
+                ctx.font = theme.active ? 'bold 14px Arial' : '14px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(theme.name, 400, y + 22);
+            });
+            
+            // Sol taraf - web sayfası içeriği
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 24px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Web Sayfası Örneği', 20, 100);
+            
+            ctx.font = '16px Arial';
+            ctx.fillText('Bu beyaz sayfa gözlerinizi yoruyor.', 20, 130);
+            ctx.fillText('Koyu tema ile çok daha rahat!', 20, 160);
+            
+            // Buton
+            ctx.fillStyle = '#1a73e8';
+            ctx.fillRect(20, 180, 100, 35);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Örnek Buton', 70, 202);
+        }
+
+        // Promo Tile oluştur
+        function createPromoTile() {
+            const canvas = document.getElementById('promoTile');
+            const ctx = canvas.getContext('2d');
+            
+            // Gradient arkaplan
+            const gradient = ctx.createLinearGradient(0, 0, 440, 280);
+            gradient.addColorStop(0, '#1a1a1a');
+            gradient.addColorStop(1, '#2d2d2d');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 440, 280);
+            
+            // Ana simge
+            ctx.font = '64px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillText('🌙', 220, 80);
+            
+            // Başlık
+            ctx.font = 'bold 32px Arial';
+            ctx.fillText('Akıllı Koyu Tema', 220, 140);
+            
+            // Alt başlık
+            ctx.fillStyle = '#cccccc';
+            ctx.font = '18px Arial';
+            ctx.fillText('Gözlerinizi koruyun', 220, 170);
+            
+            // Özellikler
+            ctx.font = '14px Arial';
+            ctx.fillText('4 Tema • Otomatik Algılama • Hızlı', 220, 200);
+            
+            // Alt badge
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillRect(120, 220, 200, 30);
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('Ücretsiz ve Reklamsız', 220, 240);
+        }
+
+        // Marquee oluştur
+        function createMarquee() {
+            const canvas = document.getElementById('marquee');
+            const ctx = canvas.getContext('2d');
+            
+            // Gradient arkaplan
+            const gradient = ctx.createLinearGradient(0, 0, 700, 280);
+            gradient.addColorStop(0, '#0f0f0f');
+            gradient.addColorStop(0.5, '#1a1a1a');
+            gradient.addColorStop(1, '#2d2d2d');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 700, 280);
+            
+            // Dekoratif noktalar
+            ctx.fillStyle = 'rgba(76, 175, 80, 0.1)';
+            for(let i = 0; i < 30; i++) {
+                ctx.beginPath();
+                ctx.arc(Math.random() * 700, Math.random() * 280, Math.random() * 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Ana simge
+            ctx.font = '48px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillText('🌙', 350, 60);
+            
+            // Başlık
+            ctx.font = 'bold 36px Arial';
+            ctx.fillText('Akıllı Koyu Tema', 350, 110);
+            
+            // Alt başlık
+            ctx.fillStyle = '#cccccc';
+            ctx.font = '16px Arial';
+            ctx.fillText('Web sayfalarını göz dostu koyu temalara çevirin', 350, 140);
+            
+            // Özellik rozetleri
+            const features = ['4 Tema', 'Otomatik', 'Hızlı', 'Ücretsiz'];
+            features.forEach((feature, i) => {
+                const x = 100 + i * 150;
+                
+                // Rozet
+                ctx.fillStyle = '#2d2d2d';
+                ctx.fillRect(x - 40, 170, 80, 30);
+                
+                ctx.strokeStyle = '#4CAF50';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x - 40, 170, 80, 30);
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText(feature, x, 190);
+            });
+            
+            // Alt CTA
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillRect(250, 220, 200, 35);
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('Chrome\'a Ekle', 350, 242);
+        }
+
+        // Canvas indirme fonksiyonu
+        function downloadCanvas(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            
+            canvas.toBlob(function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                alert('✅ ' + filename + ' indirildi!');
+            }, 'image/png');
+        }
+
+        // Büyük boyutlu görsel oluşturma fonksiyonları
+        function createAndDownloadIcon() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            
+            // Store icon çiz (aynı kod)
+            const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+            gradient.addColorStop(0, '#2d2d2d');
+            gradient.addColorStop(1, '#1a1a1a');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 128, 128);
+            
+            ctx.globalCompositeOperation = 'destination-in';
+            ctx.beginPath();
+            roundRect(ctx, 0, 0, 128, 128, 20);
+            ctx.fill();
+            ctx.globalCompositeOperation = 'source-over';
+            
+            ctx.font = '64px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillText('🌙', 64, 64);
+            
+            // Parlaklık efekti
+            const highlight = ctx.createRadialGradient(40, 40, 0, 40, 40, 50);
+            highlight.addColorStop(0, 'rgba(255,255,255,0.3)');
+            highlight.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = highlight;
+            ctx.fillRect(0, 0, 128, 128);
+            
+            // İndir
+            canvas.toBlob(blob => {
+                downloadBlob(blob, 'store-icon-128x128.png');
+            }, 'image/png');
+        }
+
+        function createAndDownloadScreenshot() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1280;
+            canvas.height = 800;
+            const ctx = canvas.getContext('2d');
+            
+            // 2x büyütülmüş screenshot çiz
+            drawLargeScreenshot(ctx, 1280, 800);
+            
+            canvas.toBlob(blob => {
+                downloadBlob(blob, 'screenshot-popup-1280x800.png');
+            }, 'image/png');
+        }
+
+        function createAndDownloadPromo() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 440;
+            canvas.height = 280;
+            const ctx = canvas.getContext('2d');
+            
+            // Promo tile çiz (aynı kod ama 440x280)
+            const gradient = ctx.createLinearGradient(0, 0, 440, 280);
+            gradient.addColorStop(0, '#1a1a1a');
+            gradient.addColorStop(1, '#2d2d2d');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 440, 280);
+            
+            ctx.font = '64px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillText('🌙', 220, 80);
+            
+            ctx.font = 'bold 32px Arial';
+            ctx.fillText('Akıllı Koyu Tema', 220, 140);
+            
+            ctx.fillStyle = '#cccccc';
+            ctx.font = '18px Arial';
+            ctx.fillText('Gözlerinizi koruyun', 220, 170);
+            
+            ctx.font = '14px Arial';
+            ctx.fillText('4 Tema • Otomatik Algılama • Hızlı', 220, 200);
+            
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillRect(120, 220, 200, 30);
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('Ücretsiz ve Reklamsız', 220, 240);
+            
+            canvas.toBlob(blob => {
+                downloadBlob(blob, 'promo-tile-440x280.png');
+            }, 'image/png');
+        }
+
+        function createAndDownloadMarquee() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1400;
+            canvas.height = 560;
+            const ctx = canvas.getContext('2d');
+            
+            // Marquee çiz (2x büyütülmüş)
+            drawLargeMarquee(ctx, 1400, 560);
+            
+            canvas.toBlob(blob => {
+                downloadBlob(blob, 'marquee-promo-1400x560.png');
+            }, 'image/png');
+        }
+
+        function drawLargeScreenshot(ctx, width, height) {
+            // Beyaz arkaplan
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Browser çubuğu
+            ctx.fillStyle = '#f1f3f4';
+            ctx.fillRect(0, 0, width, 80);
+            
+            // Browser elementleri (2x büyük)
+            ctx.fillStyle = '#ff5f57';
+            ctx.beginPath();
+            ctx.arc(30, 40, 12, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#ffbd2e';
+            ctx.beginPath();
+            ctx.arc(70, 40, 12, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#28ca42';
+            ctx.beginPath();
+            ctx.arc(110, 40, 12, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // URL çubuğu
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(160, 20, 800, 40);
+            ctx.strokeStyle = '#dadce0';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(160, 20, 800, 40);
+            
+            ctx.fillStyle = '#5f6368';
+            ctx.font = '24px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('https://example.com - Koyu Tema Aktif', 170, 45);
+            
+            // Extension simgesi
+            ctx.fillStyle = '#2d2d2d';
+            ctx.fillRect(width - 80, 16, 48, 48);
+            ctx.fillStyle = '#4CAF50';
+            ctx.font = '32px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🌙', width - 56, 48);
+            
+            // Extension popup
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            ctx.fillRect(width - 570, 105, 560, 600); // Gölge
+            
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(width - 575, 100, 560, 600);
+            
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(width - 575, 100, 560, 600);
+            
+            // Popup başlık
+            ctx.fillStyle = '#4CAF50';
+            ctx.font = 'bold 36px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('🌙 Akıllı Koyu Tema', width - 295, 160);
+            
+            // Başlık çizgisi
+            ctx.strokeStyle = '#333';
+            ctx.beginPath();
+            ctx.moveTo(width - 560, 180);
+            ctx.lineTo(width - 30, 180);
+            ctx.stroke();
+            
+            // Tema seçenekleri
+            const themes = [
+                { name: 'Standart Koyu', color: '#2d2d2d', active: true },
+                { name: 'Yumuşak Koyu', color: '#3d3d3d' },
+                { name: 'Yüksek Kontrast', color: '#000' },
+                { name: 'Mavi Koyu', color: '#1a2332' }
+            ];
+            
+            themes.forEach((theme, i) => {
+                const y = 220 + i * 80;
+                
+                // Tema kutusu
+                ctx.fillStyle = theme.active ? '#4CAF50' : '#333';
+                ctx.fillRect(width - 545, y, 500, 60);
+                
+                ctx.strokeStyle = theme.active ? '#4CAF50' : '#555';
+                ctx.strokeRect(width - 545, y, 500, 60);
+                
+                // Tema renk dairesi
+                ctx.fillStyle = theme.color;
+                ctx.beginPath();
+                ctx.arc(width - 510, y + 30, 20, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                
+                // Tema adı
+                ctx.fillStyle = theme.active ? '#000' : '#e0e0e0';
+                ctx.font = theme.active ? 'bold 28px Arial' : '28px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(theme.name, width - 470, y + 40);
+            });
+            
+            // Sol taraf - web sayfası örneği
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 48px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Web Sayfası Örneği', 40, 200);
+            
+            ctx.font = '32px Arial';
+            ctx.fillText('Bu beyaz sayfa gözlerinizi yoruyor ve', 40, 260);
+            ctx.fillText('dikkat dağıtıyor. Özellikle karanlık', 40, 300);
+            ctx.fillText('ortamda çok rahatsız edici!', 40, 340);
+            
+            ctx.fillText('Koyu tema ile çok daha rahat bir', 40, 420);
+            ctx.fillText('okuma deneyimi yaşayın.', 40, 460);
+            
+            // Örnek buton
+            ctx.fillStyle = '#1a73e8';
+            ctx.fillRect(40, 500, 200, 70);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 28px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Örnek Buton', 140, 545);
+            
+            // Örnek link
+            ctx.fillStyle = '#1a73e8';
+            ctx.font = '24px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('Bu bir örnek link metnidir', 40, 620);
+        }
+
+        function drawLargeMarquee(ctx, width, height) {
+            // Gradient arkaplan
+            const gradient = ctx.createLinearGradient(0, 0, width, height);
+            gradient.addColorStop(0, '#0f0f0f');
+            gradient.addColorStop(0.3, '#1a1a1a');
+            gradient.addColorStop(0.7, '#2d2d2d');
+            gradient.addColorStop(1, '#1a1a1a');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Dekoratif arka plan deseni
+            ctx.fillStyle = 'rgba(76, 175, 80, 0.05)';
+            for(let i = 0; i < 100; i++) {
+                ctx.beginPath();
+                ctx.arc(Math.random() * width, Math.random() * height, Math.random() * 8 + 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Ana simge (parlama efektiyle)
+            ctx.shadowColor = '#4CAF50';
+            ctx.shadowBlur = 60;
+            ctx.font = '120px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillText('🌙', width/2, height * 0.25);
+            ctx.shadowBlur = 0;
+            
+            // Ana başlık (gradient text)
+            const titleGradient = ctx.createLinearGradient(0, height * 0.35, 0, height * 0.45);
+            titleGradient.addColorStop(0, '#4CAF50');
+            titleGradient.addColorStop(1, '#66bb6a');
+            ctx.fillStyle = titleGradient;
+            ctx.font = 'bold 72px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Akıllı Koyu Tema', width/2, height * 0.4);
+            
+            // Alt başlık
+            ctx.fillStyle = '#cccccc';
+            ctx.font = '32px Arial';
+            ctx.fillText('Web sayfalarını göz dostu koyu temalara çevirin', width/2, height * 0.5);
+            
+            // Özellik rozetleri
+            const features = ['4 Tema', 'Otomatik', 'Hızlı', 'Ücretsiz'];
+            features.forEach((feature, i) => {
+                const x = width/4 + i * (width/4);
+                
+                // Rozet
+                ctx.fillStyle = '#2d2d2d';
+                ctx.fillRect(x - 80, height * 0.6, 160, 60);
+                
+                ctx.strokeStyle = '#4CAF50';
+                ctx.lineWidth = 4;
+                ctx.strokeRect(x - 80, height * 0.6, 160, 60);
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 24px Arial';
+                ctx.fillText(feature, x, height * 0.64);
+            });
+            
+            // Alt CTA
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillRect(width/2 - 200, height * 0.8, 400, 70);
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 32px Arial';
+            ctx.fillText('Chrome\'a Ekle', width/2, height * 0.85);
+        }
+
+        // Yuvarlatılmış köşeler için yardımcı fonksiyon
+        function roundRect(ctx, x, y, width, height, radius) {
+            ctx.beginPath();
+            ctx.moveTo(x + radius, y);
+            ctx.lineTo(x + width - radius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+            ctx.lineTo(x + width, y + height - radius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            ctx.lineTo(x + radius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+            ctx.lineTo(x, y + radius);
+            ctx.quadraticCurveTo(x, y, x + radius, y);
+            ctx.closePath();
+        }
+
+        // Blob indirme yardımcı fonksiyonu
+        function downloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('✅ ' + filename + ' başarıyla indirildi!');
+        }
+
+        // Tüm görselleri indirme fonksiyonu
+        function downloadAllImages() {
+            const confirmDownload = confirm('🚀 Tüm görselleri indirmek istiyor musunuz?\n\n4 farklı görsel dosyası indirilecek:\n• Store Icon (128x128)\n• Screenshot (1280x800)\n• Promo Tile (440x280)\n• Marquee (1400x560)');
+            
+            if (confirmDownload) {
+                // Her birini sırayla indir
+                setTimeout(() => createAndDownloadIcon(), 500);
+                setTimeout(() => createAndDownloadScreenshot(), 1000);
+                setTimeout(() => createAndDownloadPromo(), 1500);
+                setTimeout(() => createAndDownloadMarquee(), 2000);
+                
+                alert('🎉 Tüm görseller indiriliyor! Lütfen bekleyin...');
+            }
+        }
+    </script>
+</body>
+</html>

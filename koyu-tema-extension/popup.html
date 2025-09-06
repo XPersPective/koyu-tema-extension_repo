@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            width: 300px;
+            padding: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+        }
+        h2 {
+            color: #4CAF50;
+            margin-top: 0;
+            font-size: 18px;
+            text-align: center;
+        }
+        .theme-option {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #333;
+        }
+        .theme-option:hover {
+            background: #2d2d2d;
+            border-color: #4CAF50;
+        }
+        .theme-option.active {
+            background: #4CAF50;
+            color: #000;
+            font-weight: bold;
+        }
+        .theme-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid #fff;
+        }
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .status.enabled {
+            background: #2d4a2d;
+            color: #90EE90;
+        }
+        .status.disabled {
+            background: #4a2d2d;
+            color: #FFB6C1;
+        }
+        .toggle-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+        }
+        .toggle-btn.enable {
+            background: #4CAF50;
+            color: #000;
+        }
+        .toggle-btn.disable {
+            background: #f44336;
+            color: #fff;
+        }
+        .toggle-btn:hover {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <h2>🌙 Koyu Tema</h2>
+    
+    <div class="theme-option" data-theme="standard">
+        <div class="theme-circle" style="background: linear-gradient(45deg, #2d2d2d, #1a1a1a);"></div>
+        <span>Standart Koyu</span>
+    </div>
+    
+    <div class="theme-option" data-theme="soft">
+        <div class="theme-circle" style="background: linear-gradient(45deg, #2d2d2d, #3d3d3d);"></div>
+        <span>Yumuşak Koyu</span>
+    </div>
+    
+    <div class="theme-option" data-theme="high-contrast">
+        <div class="theme-circle" style="background: linear-gradient(45deg, #000, #333);"></div>
+        <span>Yüksek Kontrast</span>
+    </div>
+    
+    <div class="theme-option" data-theme="blue">
+        <div class="theme-circle" style="background: linear-gradient(45deg, #1a2332, #2d3748);"></div>
+        <span>Mavi Koyu</span>
+    </div>
+    
+    <div id="status" class="status"></div>
+    <button id="toggle" class="toggle-btn"></button>
+    
+    <script src="popup.js"></script>
+</body>
+</html>
